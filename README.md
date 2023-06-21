@@ -1,5 +1,23 @@
 # Circom export to Cairo
 
+## Compile
+
+```bash
+cairo-compile verifier.cairo --output verifier_compiled.json
+```
+
+## Run
+
+It may take about 20min
+
+```bash
+cairo-run --program=verifier_compiled.json --print_output --print_info --relocate_prints --layout=all --tracer
+```
+
+edited by Radius
+
+---
+
 ## Diagram
 
 ![Flux-Diagram](Flux-Diagram.drawio.png "Flux-Diagram")
@@ -17,7 +35,7 @@ This Repository contains the following:
 
 First write and compile a circuit and compute the witness through circom, then generate a validation key through snarkjs (this process is properly explained at https://docs.circom.io/getting-started/installation/), this will yield a .zkey, which we can use to generate a solidity verifier through the command:
 
-``` bash
+```bash
 snarkjs zkey export solidityverifier [name of your key].zkey [nme of the verifier produced]
 ```
 
@@ -27,19 +45,26 @@ The Makefile has a target called "generate_verifier" that will copy our template
 
 ### How to test this process in a Docker container
 
-* Create a docker container with the compiler and all the requirements:
-``` bash
+- Create a docker container with the compiler and all the requirements:
+
+```bash
 make docker-build
 ```
-* Log into the container created:
-``` bash
+
+- Log into the container created:
+
+```bash
 make docker-run
 ```
+
 the prompt will be located at the `/home` directory. The file `verifier_groth16.cairo` is the template file that generates Cairo code. The provided commands are written in the `Makefile`.
-* To run the generation of the verifier:
-``` bash
+
+- To run the generation of the verifier:
+
+```bash
 make generate_verifier
 ```
+
 it generates the file `verifier.cairo`.
 
 If you want to test this process without docker, you should put the template file (`verifier_groth16.cairo`) in the same directory that npm puts the program files (`npm root -g` shows that directory).
@@ -89,7 +114,7 @@ On the functions addition, scalar_mu and pairing, there is a block of Yul code, 
 After reading the contract that is called by the pairing function on the solidity template, and going through the libraries it uses I found how the pairing check is made:
 (On go-ethereum/core/vm/contracts.go)
 
-``` go
+```go
 func (c *bn256Pairing) Run(input []byte) ([]byte, error) {
 	// Handle some corner cases cheaply
 	if len(input)%192 > 0 {
@@ -122,7 +147,7 @@ func (c *bn256Pairing) Run(input []byte) ([]byte, error) {
 
 (On go-ethereum/crypto/bn256/cloudflare/bn256.go)
 
-``` go
+```go
 // PairingCheck calculates the Optimal Ate pairing for a set of points.
 func PairingCheck(a []*G1, b []*G2) bool {
 	acc := new(gfP12)
@@ -140,7 +165,7 @@ func PairingCheck(a []*G1, b []*G2) bool {
 
 This behaves similarly to the pairing function on the cairo-alt_bn128 library:
 
-``` cairo
+```cairo
 func pairing{range_check_ptr}(Q : G2Point, P : G1Point) -> (res : FQ12):
     alloc_locals
     let (local twisted_Q : GTPoint) = twist(Q)
@@ -152,17 +177,17 @@ end
 
 But the difference lies in the last two lines:
 
-``` go
+```go
 acc.Mul(acc, miller(b[i].p, a[i].p))
 	}
 	return finalExponentiation(acc).IsOne()
 ```
+
 Where we can see that the results of the miller loop are multiplied against the previous one and stored in acc.
 And then the final result is compared to one. This also coincides with the comment of top of the pairing function on the solidity template:
 
-``` solidity
+```solidity
  /// e(p1[0], p2[0]) *  .... * e(p1[n], p2[n]) == 1
- ```
- 
- This is also shown on the pairing_test function on cairo-alt_bn128/alt_bn128_example.cairo, where p1 and p2, and -p1 and p2 are paired, and their pairing results are multiplied and shown to result in the FQ12 one (That is to say 1, followed by 11 zeroes)
+```
 
+This is also shown on the pairing_test function on cairo-alt_bn128/alt_bn128_example.cairo, where p1 and p2, and -p1 and p2 are paired, and their pairing results are multiplied and shown to result in the FQ12 one (That is to say 1, followed by 11 zeroes)
