@@ -231,32 +231,17 @@ end
 
 func main{output_ptr: felt*, pedersen_ptr : HashBuiltin*, range_check_ptr: felt}():
 
+    # proof
     let (a_ptr: felt*) = alloc()
-    assert[a_ptr] =     16435458185497151578792433
+    assert[a_ptr]     = 16435458185497151578792433
     assert[a_ptr + 1] = 40172872974813924995536275
     assert[a_ptr + 2] = 3258538799375934883692565
     assert[a_ptr + 3] = 21845360519278039434162382
     assert[a_ptr + 4] = 37032914906954177889717841
     assert[a_ptr + 5] = 422447693251006666742151
 
-    # let (b1_ptr: felt*) = alloc()
-    # assert[b1_ptr] =     39203446000482540257637925
-    # assert[b1_ptr + 1] = 8372331185708158742649818
-    # assert[b1_ptr + 2] = 1940944301260288891776770
-    # assert[b1_ptr + 3] = 14539866263615908413985012
-    # assert[b1_ptr + 4] = 28351972057156804035626776
-    # assert[b1_ptr + 5] = 3102459511026671344229042
-
-    # let (b2_ptr: felt*) = alloc()
-    # assert[b2_ptr] =     61583281797485710770918457
-    # assert[b2_ptr + 1] = 6382783199640232524620208
-    # assert[b2_ptr + 2] = 1641855124893934125318615
-    # assert[b2_ptr + 3] = 69691338484345404523556820
-    # assert[b2_ptr + 4] = 25590015895417664527867300
-    # assert[b2_ptr + 5] = 1131355528622211432153452
-
     let (b1_ptr: felt*) = alloc()
-    assert[b1_ptr] =    14539866263615908413985012
+    assert[b1_ptr]     = 14539866263615908413985012
     assert[b1_ptr + 1] = 28351972057156804035626776
     assert[b1_ptr + 2] = 3102459511026671344229042
     assert[b1_ptr + 3] = 39203446000482540257637925
@@ -264,22 +249,22 @@ func main{output_ptr: felt*, pedersen_ptr : HashBuiltin*, range_check_ptr: felt}
     assert[b1_ptr + 5] = 1940944301260288891776770
 
     let (b2_ptr: felt*) = alloc()
-    assert[b2_ptr] =    69691338484345404523556820
+    assert[b2_ptr]     = 69691338484345404523556820
     assert[b2_ptr + 1] = 25590015895417664527867300
     assert[b2_ptr + 2] = 1131355528622211432153452
     assert[b2_ptr + 3] = 61583281797485710770918457
     assert[b2_ptr + 4] = 6382783199640232524620208
     assert[b2_ptr + 5] = 1641855124893934125318615
 
-
     let (c_ptr: felt*) = alloc()
-    assert[c_ptr] =     37449182766458286666487412
+    assert[c_ptr]     = 37449182766458286666487412
     assert[c_ptr + 1] = 67949700759915101588395634
     assert[c_ptr + 2] = 1615312652241491981991622
     assert[c_ptr + 3] = 18053195823741242528076033
     assert[c_ptr + 4] = 63793431666194470068739038
     assert[c_ptr + 5] = 2763392202904072211382205
 
+    # public input
     let (input_ptr: felt*) = alloc()
     assert [input_ptr] = 33
     assert [input_ptr + 1] = 0
